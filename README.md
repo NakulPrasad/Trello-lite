@@ -4,15 +4,33 @@ Screen shots
 
 
 ## Q. If a user can create and edit stages for a particular board. For example instead of Open > In Progress > Done if they want the stages of their task board to be Read > Working > Reviewing > Completed<br>
-A. 
-<br>
+#### Database Changes:
+**Task Stages Table:** introduce a new table to store the possible stages that users can choose from for their task boards. This table could include fields like StageID, BoardID, Name, and Order to represent the stage name and its position in the sequence.
+
+![image](https://github.com/NakulPrasad/Trello-lite/assets/96919039/ef0b0ea6-305e-445b-b962-16a957ffaee0)
+
+![image](https://github.com/NakulPrasad/Trello-lite/assets/96919039/dfd1fbcb-ef89-4361-8998-61e3a23851d8)
+
+
+#### API Changes:
+1. Create/Edit Board Stages Endpoint: <br>
+Endpoint: POST /api/boards/{board_id}/stages<br>
+Description: Allows users to create or edit the stages for a specific board.
+
+2. Get Available Stages Endpoint:<br>
+Endpoint: GET /api/stages<br>
+Description: Retrieves the available stages that users can choose from when creating or editing a board.
+
+
 ## Q. If users can comment on tasks
-### **Database Changes:**
-**Task Comments Table: **Introduce a new table to store comments on tasks. This table should include fields like CommentID, TaskID, UserID, CommentText, Timestamp, etc., to store the comment details.
+### Database Changes:
+**Task Comments Table:**  Introduce a new table to store comments on tasks. This table should include fields like CommentID, TaskID, UserID, CommentText, Timestamp, etc., to store the comment details.
 
-User Table (if not already present): If you don't already have a table to store user information, create one to associate comments with users.
+**User Table:** Stores user information, and comments made by users.
 
-Task Table Update: Add a field to your existing task table to associate tasks with comments (e.g., CommentIDs as an array or reference to the Task Comments Table).
+**Task Table**: Add a field CommendID to existing task table to associate tasks with comments.
+![image](https://github.com/NakulPrasad/Trello-lite/assets/96919039/da642496-84a6-4833-90ac-24dd8e6311d2)
+
 
 ### **API Changes:**
 #### Add Comments to Task Endpoint:
@@ -30,8 +48,13 @@ Request Body (JSON):
 Response (Success - 201 Created):
 ```json
 {
-  "message": "Comment added successfully."
+  "commentID": 5, // ID of the newly created comment
+  "taskID": 201, // ID of the task to which the comment was added
+  "userID": 301, // ID of the user who created the comment
+  "commentText": "This task is looking great!",
+  "timestamp": "2023-09-22T14:30:00Z" // Timestamp of the comment
 }
+
 
 ```
 #### Retrieve Comments for Task Endpoint:
@@ -40,22 +63,23 @@ Description: Retrieves the comments associated with a specific task.
 Response (Success - 200 OK):
 
 ```json
-{
-  "comments": [
-    {
-      "comment_id": "comment1",
-      "user_id": "user123",
-      "comment_text": "This task is progressing well.",
-      "timestamp": "2023-09-22T10:00:00Z"
-    },
-    {
-      "comment_id": "comment2",
-      "user_id": "user456",
-      "comment_text": "Agreed!",
-      "timestamp": "2023-09-22T10:15:00Z"
-    }
-  ]
-}
+[
+  {
+    "commentID": 1,
+    "taskID": 201,
+    "userID": 301,
+    "commentText": "This task looks interesting!",
+    "timestamp": "2023-09-22T10:00:00Z"
+  },
+  {
+    "commentID": 2,
+    "taskID": 201,
+    "userID": 302,
+    "commentText": "I agree, let's get started!",
+    "timestamp": "2023-09-22T10:15:00Z"
+  }
+]
+
 
 ```
 
